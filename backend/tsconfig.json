@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES2020", // Gunakan versi yang lebih modern
+    "module": "commonjs",
+    "outDir": "./dist",      // Direktori output
+    "rootDir": "./src",      // Direktori sumber
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node", // Sangat direkomendasikan
+    "sourceMap": true // Berguna untuk debugging di produksi
+  },
+  // Hanya sertakan file di dalam 'src' untuk di-build
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
+}

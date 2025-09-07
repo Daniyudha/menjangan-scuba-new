@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String   
+  role      String   @default("ADMIN")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Package {
+  id          String   @id @default(cuid())
+  title       String
+  price       String
+  description String   @db.Text
+  inclusions  Json     
+  imageUrl    String?  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Article {
+  id            String   @id @default(cuid())
+  title         String   @unique
+  status        String   
+  date          String   
+  content       String   @db.LongText
+  featuredImage String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model GalleryImage {
+  id        String   @id @default(cuid())
+  url       String
+  caption   String
+  category  String
+  createdAt DateTime @default(now())
+}
+
+model GalleryCategory {
+  id   String @id @default(cuid())
+  name String @unique
+}
+
+model Testimonial {
+  id         String   @id @default(cuid())
+  name       String
+  quote      String   @db.Text
+  isFeatured Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  origin     String? 
+  avatarUrl  String?
+}
+
+model Submission {
+  id      String @id @default(cuid())
+  name    String
+  email   String
+  message String @db.Text
+  date    String 
+  isRead  Boolean  @default(false)
+}
+
+// Model untuk menyimpan pengaturan. Kita akan menyimpannya sebagai satu entri.
+model Setting {
+  id          String @id @default("main_settings") 
+  hero        Json
+  experience  Json
+  socialLinks Json
+  updatedAt   DateTime @updatedAt
+}

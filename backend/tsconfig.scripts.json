@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json", // Mewarisi semua dari tsconfig.json utama
+  "compilerOptions": {
+    "rootDir": ".", // Mengizinkan file dari mana saja di root
+    "noEmit": true, // Jangan membuat file output .js untuk skrip ini
+    "types": ["node"] // Secara eksplisit sertakan tipe Node.js
+  },
+  "include": ["prisma/**/*"] // Hanya fokus pada folder prisma
+}
