@@ -7,20 +7,26 @@ import Image from "next/image";
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 
 // Tipe data dari backend
-interface GalleryImage { id: string; url: string; caption: string; category: string; }
+interface GalleryImage { id: string; url: string; caption: string; category: string; createdAt: string; }
+interface GalleryVideo { id: string; youtubeUrl: string; caption: string; category: string; createdAt: string; }
 interface GalleryCategory { id: string; name: string; }
+
+type GalleryItem = GalleryImage | GalleryVideo;
 
 export default function GalleryAdminPage() {
     const [images, setImages] = useState<GalleryImage[]>([]);
+    const [videos, setVideos] = useState<GalleryVideo[]>([]);
     const [categories, setCategories] = useState<GalleryCategory[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [activeCategory, setActiveCategory] = useState<string>('All');
     const [notification, setNotification] = useState<string | null>(null);
     const [newCategoryName, setNewCategoryName] = useState('');
-    const [showDeleteConfirm, setShowDeleteConfirm] = useState<GalleryImage | null>(null);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState<GalleryItem | null>(null);
+    const [activeTab, setActiveTab] = useState<'images' | 'videos'>('images');
 
     const [uploadPreview, setUploadPreview] = useState<string | null>(null);
+    const [youtubeUrl, setYoutubeUrl] = useState('');
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
     const baseUrl = apiUrl.replace('/api', '');
@@ -28,16 +34,18 @@ export default function GalleryAdminPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [imagesData, categoriesData] = await Promise.all([
+                const [imagesData, videosData, categoriesData] = await Promise.all([
                     apiClient('/gallery/images'),
+                    apiClient('/gallery/videos'),
                     apiClient('/gallery/categories')
                 ]);
                 setImages(imagesData);
+                setVideos(videosData);
                 setCategories(categoriesData);
             } catch (err: unknown) {
                 setError(err instanceof Error ? err.message : 'An unknown error occurred');
-            } finally { 
-                setLoading(false); 
+            } finally {
+                setLoading(false);
             }
         };
         fetchData();
@@ -99,12 +107,39 @@ export default function GalleryAdminPage() {
         }
     };
 
-    const handleDeleteImage = async () => {
+    const handleVideoUpload = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        try {
+            const newVideo = await apiClient('/gallery/videos', {
+                method: 'POST',
+                body: JSON.stringify({
+                    youtubeUrl: youtubeUrl,
+                    caption: formData.get('caption') as string,
+                    category: formData.get('category') as string
+                }),
+            });
+            setVideos([newVideo, ...videos]);
+            (e.target as HTMLFormElement).reset();
+            setYoutubeUrl('');
+            setNotification('Video added successfully.');
+        } catch (err: unknown) {
+            setNotification(`Error: ${err instanceof Error ? err.message : 'An unknown error occurred'}`);
+        }
+    };
+
+    const handleDeleteItem = async () => {
         if (!showDeleteConfirm) return;
         try {
-            await apiClient(`/gallery/images/${showDeleteConfirm.id}`, { method: 'DELETE' });
-            setImages(images.filter(img => img.id !== showDeleteConfirm.id));
-            setNotification(`Image "${showDeleteConfirm.caption}" deleted.`);
+            if ('url' in showDeleteConfirm) {
+                await apiClient(`/gallery/images/${showDeleteConfirm.id}`, { method: 'DELETE' });
+                setImages(images.filter(img => img.id !== showDeleteConfirm.id));
+                setNotification(`Image "${showDeleteConfirm.caption}" deleted.`);
+            } else {
+                await apiClient(`/gallery/videos/${showDeleteConfirm.id}`, { method: 'DELETE' });
+                setVideos(videos.filter(video => video.id !== showDeleteConfirm.id));
+                setNotification(`Video "${showDeleteConfirm.caption}" deleted.`);
+            }
         } catch (err: unknown) {
             setNotification(`Error: ${err instanceof Error ? err.message : 'An unknown error occurred'}`);
         } finally {
@@ -112,10 +147,30 @@ export default function GalleryAdminPage() {
         }
     };
     
-    const filteredImages = activeCategory === 'All' ? images : images.filter(img => img.category === activeCategory);
+    // Fungsi untuk mendapatkan ID video YouTube dari URL
+    const getYouTubeVideoId = (url: string): string | null => {
+        const match = url.match(/(?:youtube\.com\/shorts\/|youtu\.be\/|youtube\.com\/watch\?v=)([^&]+)/);
+        return match ? match[1] : null;
+    };
+
+    // Fungsi untuk mendeteksi tipe video (short atau regular)
+    const getYouTubeVideoType = (url: string): 'short' | 'video' => {
+        if (url.includes('youtube.com/shorts/')) {
+            return 'short';
+        }
+        return 'video';
+    };
+
+    // Gabungkan gambar dan video menjadi satu array dan urutkan berdasarkan tanggal dibuat
+    const allItems: GalleryItem[] = [...images, ...videos].sort((a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+
+    // Filter item berdasarkan kategori yang aktif
+    const filteredItems = activeCategory === 'All' ? allItems : allItems.filter(item => item.category === activeCategory);
     
     if (loading) return <div>Loading gallery...</div>;
-    if (error && images.length === 0) return <div className="text-red-500">Error: {error}</div>;
+    if (error && images.length === 0 && videos.length === 0) return <div className="text-red-500">Error: {error}</div>;
 
     return (
         <div>
@@ -130,21 +185,34 @@ export default function GalleryAdminPage() {
             {showDeleteConfirm && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
                     <div className="bg-white p-8 rounded-lg shadow-xl text-center">
-                        <h2 className="text-xl font-bold text-dark-navy mb-4">Delete Image?</h2>
+                        <h2 className="text-xl font-bold text-dark-navy mb-4">Delete Item?</h2>
                         <p className="text-slate mb-6">
-                            Are you sure you want to delete this image: <br />
+                            Are you sure you want to delete this item: <br />
                             <strong className="text-dark-navy">{showDeleteConfirm.caption}</strong>
                         </p>
-                        <Image src={`${baseUrl}${showDeleteConfirm.url}`} alt={showDeleteConfirm.caption} width={100} height={100} className="mx-auto my-4 rounded-md object-cover"/>
+                        {'url' in showDeleteConfirm ? (
+                            <Image src={`${baseUrl}${showDeleteConfirm.url}`} alt={showDeleteConfirm.caption} width={100} height={100} className="mx-auto my-4 rounded-md object-cover"/>
+                        ) : (
+                            <div className="w-40 aspect-video mx-auto my-4">
+                                <iframe
+                                    src={`https://www.youtube.com/embed/${getYouTubeVideoId(showDeleteConfirm.youtubeUrl)}?autoplay=1&mute=1&playsinline=1&loop=1&playlist=${getYouTubeVideoId(showDeleteConfirm.youtubeUrl)}`}
+                                    title={showDeleteConfirm.caption}
+                                    className="w-full h-full rounded-md"
+                                    frameBorder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                />
+                            </div>
+                        )}
                         <div className="flex justify-center gap-4">
                             <button onClick={() => setShowDeleteConfirm(null)} className="px-6 py-2 rounded-md bg-gray-400 hover:bg-gray-300 cursor-pointer text-white">Cancel</button>
-                            <button onClick={handleDeleteImage} className="px-6 py-2 rounded-md bg-red-500 hover:bg-red-400 cursor-pointer text-white">Yes, Delete</button>
+                            <button onClick={handleDeleteItem} className="px-6 py-2 rounded-md bg-red-500 hover:bg-red-400 cursor-pointer text-white">Yes, Delete</button>
                         </div>
                     </div>
                 </div>
             )}
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
                 <div className="bg-white p-6 rounded-lg shadow-lg">
                     <h2 className="text-xl font-bold text-dark-navy mb-4">Manage Categories</h2>
                     <form onSubmit={handleAddCategory} className="flex gap-2">
@@ -167,10 +235,10 @@ export default function GalleryAdminPage() {
                     <form className="space-y-4" onSubmit={handleUpload}>
                         <div>
                             <label className="block text-sm font-medium text-slate mb-1">Image File</label>
-                            <input 
-                                type="file" 
-                                name="upload" 
-                                required 
+                            <input
+                                type="file"
+                                name="upload"
+                                required
                                 onChange={handleFileChange} // Hubungkan ke handler baru
                                 className="w-full text-slate border border-slate/30 rounded-md cursor-pointer file:cursor-pointer file:mr-4 file:py-2 file:px-4 file:border-0 file:bg-gray-200 file:text-sm file:font-semibold file:bg-light-gray file:text-gray-blue hover:file:bg-slate/20"
                             />
@@ -203,10 +271,44 @@ export default function GalleryAdminPage() {
                         </div>
                     </form>
                 </div>
+
+                <div className="bg-white p-6 rounded-lg shadow-lg">
+                    <h2 className="text-xl font-bold text-dark-navy mb-4">Add YouTube Video</h2>
+                    <form className="space-y-4" onSubmit={handleVideoUpload}>
+                        <div>
+                            <label className="block text-sm font-medium text-slate mb-1">YouTube URL</label>
+                            <input
+                                type="url"
+                                value={youtubeUrl}
+                                onChange={(e) => setYoutubeUrl(e.target.value)}
+                                required
+                                placeholder="https://www.youtube.com/watch?v=..."
+                                className="w-full bg-light-gray p-3 rounded-md border border-slate/30"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate mb-1">Caption</label>
+                            <input type="text" name="caption" required placeholder="e.g., Diving with Turtles" className="w-full bg-light-gray p-3 rounded-md border border-slate/30"/>
+                        </div>
+                         <div>
+                            <label className="block text-sm font-medium text-slate mb-1">Category</label>
+                            <select name="category" required className="w-full bg-light-gray p-3 rounded-md border border-slate/30" disabled={categories.length === 0}>
+                                {categories.length > 0 ? (
+                                    categories.map(cat => <option key={cat.id} value={cat.name}>{cat.name}</option>)
+                                ) : (
+                                    <option>Please add a category first</option>
+                                )}
+                            </select>
+                        </div>
+                        <div className="text-right">
+                           <button type="submit" className="bg-light-navy text-white py-2 px-4 rounded-lg cursor-pointer transision duration-300">Add Video</button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
             <div>
-                <h2 className="text-2xl font-bold text-dark-navy mb-4">Gallery Images Preview</h2>
+                <h2 className="text-2xl font-bold text-dark-navy mb-4">Gallery Preview</h2>
                 <div className="flex flex-wrap gap-2 mb-6 border-b border-slate/20 pb-4">
                     <button onClick={() => setActiveCategory('All')} className={`px-4 py-2 text-sm font-semibold rounded-full ${activeCategory === 'All' ? 'bg-blue-400 text-white' : 'cursor-pointer bg-white text-slate hover:bg-blue-400 hover:text-white'}`}>All</button>
                     {categories.map(cat => (
@@ -216,25 +318,40 @@ export default function GalleryAdminPage() {
                     ))}
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {filteredImages.map(img => (
-                    <div key={img.id} className="relative group bg-navy rounded-lg overflow-hidden shadow-md">
-                        <Image src={`${baseUrl}${img.url}`} alt={img.caption} width={400} height={400} className="object-cover aspect-square"/>
+                <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-6">
+                    {filteredItems.map(item => (
+                    <div key={item.id} className="break-inside-avoid mb-6 relative group bg-navy rounded-lg overflow-hidden shadow-md">
+                        {'url' in item ? (
+                            // Render Image
+                            <Image src={`${baseUrl}${item.url}`} alt={item.caption} width={400} height={400} className="w-full h-auto object-cover"/>
+                        ) : (
+                            // Render Video with automatic aspect ratio
+                            <div className={`aspect-${getYouTubeVideoType(item.youtubeUrl) === 'short' ? '9/16' : '16/9'} w-full`}>
+                                <iframe
+                                    src={`https://www.youtube.com/embed/${getYouTubeVideoId(item.youtubeUrl)}?autoplay=1&mute=1&playsinline=1&loop=1&playlist=${getYouTubeVideoId(item.youtubeUrl)}`}
+                                    title={item.caption}
+                                    className="w-full h-full"
+                                    frameBorder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                />
+                            </div>
+                        )}
                         <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
-                            <p className="text-white font-medium text-sm truncate">{img.caption}</p>
-                            <p className="text-xs text-bright-blue font-semibold flex items-center gap-1 mt-1"><Tag size={12} /> {img.category}</p>
+                            <p className="text-white font-medium text-sm truncate">{item.caption}</p>
+                            <p className="text-xs text-bright-blue font-semibold flex items-center gap-1 mt-1"><Tag size={12} /> {item.category}</p>
                         </div>
                         <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button onClick={() => setShowDeleteConfirm(img)} className="flex items-center gap-2 text-red-400 font-semibold hover:text-red-500 cursor-pointer">
+                            <button onClick={() => setShowDeleteConfirm(item)} className="flex items-center gap-2 text-red-400 font-semibold hover:text-red-500 cursor-pointer">
                                 <Trash2 size={16} /> Delete
                             </button>
                         </div>
                     </div>
                     ))}
                 </div>
-                {filteredImages.length === 0 && (
+                {filteredItems.length === 0 && (
                     <div className="text-center py-16 bg-white rounded-lg shadow-lg">
-                        <p className="text-slate">No images found in the &quot;{activeCategory}&quot; category.</p>
+                        <p className="text-slate">No items found in the &quot;{activeCategory}&quot; category.</p>
                     </div>
                 )}
             </div>

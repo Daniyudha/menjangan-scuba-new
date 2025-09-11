@@ -79,3 +79,11 @@ model Setting {
   socialLinks Json
   updatedAt   DateTime @updatedAt
 }
+
+model GalleryVideo {
+  id          String   @id @default(cuid())
+  youtubeUrl  String
+  caption     String
+  category    String
+  createdAt   DateTime @default(now())
+}

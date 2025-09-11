@@ -132,3 +132,60 @@ export const uploadCkeditorImage = (req: Request, res: Response) => {
         res.status(500).json({ error: { message: "Server error during upload: " + (error instanceof Error ? error.message : 'Unknown error') } });
     }
 };
+
+// --- VIDEOS ---
+export const getGalleryVideos = async (req: Request, res: Response) => {
+    try {
+        const videos = await prisma.galleryVideo.findMany({
+            orderBy: { createdAt: 'desc' }
+        });
+        res.status(200).json(videos);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching gallery videos." });
+    }
+};
+
+export const createGalleryVideo = async (req: Request, res: Response) => {
+    try {
+        const { youtubeUrl, caption, category } = req.body;
+        if (!youtubeUrl || !caption || !category) {
+            return res.status(400).json({ message: "YouTube URL, caption and category are required." });
+        }
+
+        // Validate YouTube URL format
+        const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
+        if (!youtubeRegex.test(youtubeUrl)) {
+            return res.status(400).json({ message: "Invalid YouTube URL." });
+        }
+
+        const newVideo = await prisma.galleryVideo.create({
+            data: {
+                youtubeUrl,
+                caption,
+                category,
+            }
+        });
+        
+        res.status(201).json(newVideo);
+    } catch (error) {
+        res.status(500).json({ message: "Error creating video." });
+    }
+};
+
+export const deleteGalleryVideo = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        
+        const video = await prisma.galleryVideo.findUnique({ where: { id } });
+
+        if (!video) {
+            return res.status(404).json({ message: 'Video not found.' });
+        }
+
+        await prisma.galleryVideo.delete({ where: { id } });
+
+        res.status(204).send();
+    } catch (error) {
+        res.status(500).json({ message: "Error deleting video." });
+    }
+};

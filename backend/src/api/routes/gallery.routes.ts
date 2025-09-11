@@ -7,7 +7,10 @@ import {
     getGalleryCategories,
     createCategory,
     deleteCategory,
-    uploadCkeditorImage
+    uploadCkeditorImage,
+    getGalleryVideos,
+    createGalleryVideo,
+    deleteGalleryVideo
 } from '../controllers/gallery.controller';
 import { protect } from '../middleware/auth.middleware';
 import { upload } from '../../config/multer.config';
@@ -27,5 +30,10 @@ router.delete('/categories/:id', protect, deleteCategory); // Dilindungi
 // --- CKEditor Route ---
 // Dilindungi karena hanya admin yang bisa upload via CKEditor
 router.post('/ckeditor', protect, upload.single('upload'), uploadCkeditorImage);
+
+// --- Video Routes ---
+router.get('/videos', getGalleryVideos); // Publik
+router.post('/videos', protect, createGalleryVideo); // Dilindungi
+router.delete('/videos/:id', protect, deleteGalleryVideo); // Dilindungi
 
 export default router;
