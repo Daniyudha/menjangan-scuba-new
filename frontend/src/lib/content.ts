@@ -110,8 +110,8 @@ export const content = {
         services: ['Surfing', 'Free Diving', 'Scuba Diving', 'Snorkeling Dive'],
         contactTitle: 'Contact Us',
         contactInfo: {
-            phone: '+880 120 123 456',
-            email: 'info@menjangan-dive.com',
+            phone: '+62 821-9898-4623',
+            email: 'info@menjanganscuba.com',
             address: 'Menjangan Island, Bali, Indonesia'
         },
         copyright: `©${new Date().getFullYear()} MenjanganDive. All rights reserved.`,

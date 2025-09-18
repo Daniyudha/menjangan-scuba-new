@@ -26,6 +26,10 @@ const config: Config = {
         sans: ['var(--font-inter)', 'sans-serif'],
         mono: ['SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', 'monospace'],
       },
+      aspectRatio: {
+        '9/16': '9 / 16',
+        '16/9': '16 / 9',
+      },
     },
   },
   plugins: [],

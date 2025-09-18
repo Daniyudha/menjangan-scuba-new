@@ -7,8 +7,8 @@ import { content } from '@/lib/content';
 const activityImages = [
    "/images/surfing.jpg",
     "/images/free-diving.jpg",
-    "/images/dive-course.jpg",
-    "/images/snorkeling.jpg"
+    "/images/scuba-diving.jpg",
+    "/images/snorkeling-2.jpg"
 ];
 
 const ActivitiesSection = () => {

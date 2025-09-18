@@ -3,7 +3,8 @@
 
 import { apiClient } from '@/lib/apiClient';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
+import { ChevronRight, ChevronLeft } from 'lucide-react';
 
 // Tipe data
 interface GalleryImage { id: string; url: string; caption: string; category: string; createdAt: string; }
@@ -23,6 +24,11 @@ export default function GalleryPage() {
     // --- 2. State baru untuk mengontrol Lightbox ---
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
+    
+    // Swipe detection for navigation
+    const touchStartX = useRef(0);
+    const touchEndX = useRef(0);
+    const isDragging = useRef(false);
 
     const baseUrl = (process.env.NEXT_PUBLIC_API_URL || '').replace('/api', '');
 
@@ -46,6 +52,7 @@ export default function GalleryPage() {
         };
         fetchData();
     }, []);
+
     
     // Fungsi untuk mendapatkan ID video YouTube dari URL
     const getYouTubeVideoId = (url: string): string | null => {
@@ -71,6 +78,76 @@ export default function GalleryPage() {
         ? allItems
         : allItems.filter(item => item.category === activeCategory);
 
+
+    // Swipe handlers - defined after filteredItems is available
+    const handleTouchStart = useCallback((e: React.TouchEvent) => {
+        e.preventDefault();
+        touchStartX.current = e.touches[0].clientX;
+        isDragging.current = true;
+    }, []);
+
+    const handleTouchMove = useCallback((e: React.TouchEvent) => {
+        if (!isDragging.current) return;
+        e.preventDefault();
+        touchEndX.current = e.touches[0].clientX;
+    }, []);
+
+    const handleTouchEnd = useCallback(() => {
+        if (!isDragging.current || !touchStartX.current || !touchEndX.current || filteredItems.length <= 1) return;
+        
+        const diffX = touchEndX.current - touchStartX.current;
+        const swipeThreshold = 30; // Reduced threshold for easier triggering
+
+        if (Math.abs(diffX) > swipeThreshold) {
+            if (diffX > 0) {
+                // Swipe right - go to previous item
+                setCurrentIndex((prevIndex) => (prevIndex - 1 + filteredItems.length) % filteredItems.length);
+            } else {
+                // Swipe left - go to next item
+                setCurrentIndex((prevIndex) => (prevIndex + 1) % filteredItems.length);
+            }
+        }
+
+        // Reset values
+        touchStartX.current = 0;
+        touchEndX.current = 0;
+        isDragging.current = false;
+    }, [filteredItems.length]);
+
+    // Mouse drag handlers for swipe simulation (element-based)
+    const handleMouseDown = useCallback((e: React.MouseEvent) => {
+        e.preventDefault();
+        touchStartX.current = e.clientX;
+        isDragging.current = true;
+    }, []);
+
+    const handleMouseMove = useCallback((e: React.MouseEvent) => {
+        if (!isDragging.current) return;
+        e.preventDefault();
+        touchEndX.current = e.clientX;
+    }, []);
+
+    const handleMouseUp = useCallback(() => {
+        if (!isDragging.current || !touchStartX.current || !touchEndX.current || filteredItems.length <= 1) return;
+        
+        const diffX = touchEndX.current - touchStartX.current;
+        const swipeThreshold = 30; // Reduced threshold for easier triggering
+
+        if (Math.abs(diffX) > swipeThreshold) {
+            if (diffX > 0) {
+                // Drag right - go to previous item
+                setCurrentIndex((prevIndex) => (prevIndex - 1 + filteredItems.length) % filteredItems.length);
+            } else {
+                // Drag left - go to next item
+                setCurrentIndex((prevIndex) => (prevIndex + 1) % filteredItems.length);
+            }
+        }
+
+        // Reset values
+        touchStartX.current = 0;
+        touchEndX.current = 0;
+        isDragging.current = false;
+    }, [filteredItems.length]);
 
     return (
         <div className="pt-24 pb-20 bg-dark-navy min-h-screen">
@@ -153,7 +230,7 @@ export default function GalleryPage() {
                                             setLightboxOpen(true);
                                         }}
                                     >
-                                        <div className={`aspect-${getYouTubeVideoType(item.youtubeUrl) === 'short' ? '9/16' : '16/9'} w-full`}>
+                                        <div className="w-full" style={{ aspectRatio: getYouTubeVideoType(item.youtubeUrl) === 'short' ? '9/16' : '16/9' }}>
                                             <iframe
                                                 src={`https://www.youtube.com/embed/${getYouTubeVideoId(item.youtubeUrl)}?autoplay=1&mute=1&playsinline=1&loop=1&playlist=${getYouTubeVideoId(item.youtubeUrl)}`}
                                                 title={item.caption}
@@ -185,56 +262,74 @@ export default function GalleryPage() {
                 )}
             </div>
 
-            {/* Unified Lightbox Modal for both Images and Videos */}
+            {/* Unified Lightbox Modal for both Images and Videos - Redesigned */}
             {lightboxOpen && (
-                <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50" onClick={() => setLightboxOpen(false)}>
-                    <div className="relative w-full h-full max-w-6xl max-h-[90vh] mx-4" onClick={(e) => e.stopPropagation()}>
-                        {/* Close Button - Top Right */}
-                        <button
-                            className="absolute top-4 right-4 text-white text-3xl cursor-pointer z-10 bg-black/50 rounded-full p-2 hover:bg-black/70"
-                            onClick={() => setLightboxOpen(false)}
-                        >
-                            ✕
-                        </button>
-                        
-                        {/* Navigation Buttons - Left and Right Corners */}
-                        {filteredItems.length > 1 && (
-                            <>
-                                <button
-                                    className="absolute left-4 top-1/2 -translate-y-1/2 text-white text-3xl cursor-pointer z-10 bg-black/50 rounded-full p-2 hover:bg-black/70"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        setCurrentIndex((currentIndex - 1 + filteredItems.length) % filteredItems.length);
-                                    }}
-                                >
-                                    ‹
-                                </button>
-                                <button
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-white text-3xl cursor-pointer z-10 bg-black/50 rounded-full p-2 hover:bg-black/70"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        setCurrentIndex((currentIndex + 1) % filteredItems.length);
-                                    }}
-                                >
-                                    ›
-                                </button>
-                            </>
-                        )}
+                <div
+                    className="fixed inset-0 bg-black/90 flex flex-col items-center justify-center z-50"
+                    onClick={() => setLightboxOpen(false)}
+                >
+                    {/* Close Button - Top Right (outside content area) */}
+                    <button
+                        className="absolute top-6 right-6 text-white text-3xl cursor-pointer z-10  rounded-full p-3 hover:text-gray-400 transition-colors"
+                        onClick={() => setLightboxOpen(false)}
+                    >
+                        ✕
+                    </button>
+                    
+                    {/* Navigation Buttons - Left and Right (outside content area) */}
+                    {filteredItems.length > 1 && (
+                        <>
+                            <button
+                                className="absolute left-6 top-1/2 -translate-y-1/2 text-white text-3xl cursor-pointer z-10  rounded-full p-3 hover:text-gray-400 transition-colors"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setCurrentIndex((currentIndex - 1 + filteredItems.length) % filteredItems.length);
+                                }}
+                            >
+                                <ChevronLeft size={32} />
+                            </button>
+                            <button
+                                className="absolute right-6 top-1/2 -translate-y-1/2 text-white text-3xl cursor-pointer z-10 rounded-full p-3 hover:text-gray-400 transition-colors"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setCurrentIndex((currentIndex + 1) % filteredItems.length);
+                                }}
+                            >
+                                <ChevronRight size={32} />
+                            </button>
+                        </>
+                    )}
 
-                        {/* Content Area */}
-                        <div className="w-full h-full flex items-center justify-center">
+                    {/* Main Content Container - Centered and sized to media */}
+                    <div
+                        className="flex flex-col items-center"
+                        onClick={(e) => e.stopPropagation()}
+                        onTouchStart={handleTouchStart}
+                        onTouchMove={handleTouchMove}
+                        onTouchEnd={handleTouchEnd}
+                        onMouseDown={handleMouseDown}
+                        onMouseMove={handleMouseMove}
+                        onMouseUp={handleMouseUp}
+                        style={{ cursor: isDragging.current ? 'grabbing' : 'grab' }}
+                    >
+                        {/* Media Area - Sized based on content */}
+                        <div className="bg-black/50 rounded-t-lg overflow-hidden flex justify-center">
                             {'url' in filteredItems[currentIndex] ? (
-                                // Image Content
+                                // Image Content - Natural aspect ratio
                                 <Image
                                     src={`${baseUrl}${(filteredItems[currentIndex] as GalleryImage).url}`}
                                     alt={filteredItems[currentIndex].caption}
-                                    width={800}
-                                    height={800}
-                                    className="max-w-full max-h-full object-contain"
+                                    width={1200}
+                                    height={1200}
+                                    className="max-h-[75vh] w-auto object-contain"
                                 />
                             ) : (
-                                // Video Content - YouTube-like full display
-                                <div className="w-full h-full">
+                                // Video Content - Sized based on type
+                                <div className={
+                                    getYouTubeVideoType((filteredItems[currentIndex] as GalleryVideo).youtubeUrl) === 'short'
+                                        ? 'w-[40vw] max-w-[400px] aspect-[9/16]'
+                                        : 'w-[80vw] max-w-[1200px] aspect-video'
+                                }>
                                     <iframe
                                         src={`https://www.youtube.com/embed/${getYouTubeVideoId((filteredItems[currentIndex] as GalleryVideo).youtubeUrl)}?autoplay=1&mute=0&playsinline=1&loop=1&playlist=${getYouTubeVideoId((filteredItems[currentIndex] as GalleryVideo).youtubeUrl)}`}
                                         title={filteredItems[currentIndex].caption}
@@ -247,10 +342,12 @@ export default function GalleryPage() {
                             )}
                         </div>
 
-                        {/* Caption and Category - Bottom Center */}
-                        <div className="absolute bottom-4 left-0 right-0 text-white text-center">
-                            <p className="text-lg font-semibold">{filteredItems[currentIndex].caption}</p>
-                            <p className="text-sm text-bright-blue">{filteredItems[currentIndex].category}</p>
+                        {/* Caption and Category Area - Matches media width exactly */}
+                        <div className="bg-dark-navy p-2 rounded-b-lg w-full">
+                            <div className="text-center">
+                                <p className="text-xl font-bold text-white break-words">{filteredItems[currentIndex].caption}</p>
+                                <p className="text-sm text-bright-blue">{filteredItems[currentIndex].category}</p>
+                            </div>
                         </div>
                     </div>
                 </div>

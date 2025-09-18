@@ -75,15 +75,15 @@ const ContactSection = () => {
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
               <div>
                 <label htmlFor="name" className="block text-light-slate mb-2">Full Name</label>
-                <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} required className="w-full bg-navy border border-light-navy/50 rounded-md p-3 text-white"/>
+                <input placeholder="Your Full Name" type="text" id="name" name="name" value={formData.name} onChange={handleChange} required className="w-full bg-navy border border-light-navy/50 rounded-md p-3 text-white"/>
               </div>
               <div>
                 <label htmlFor="email" className="block text-light-slate mb-2">Email Address</label>
-                <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required className="w-full bg-navy border border-light-navy/50 rounded-md p-3 text-white"/>
+                <input placeholder="Ex, example@mail.com" type="email" id="email" name="email" value={formData.email} onChange={handleChange} required className="w-full bg-navy border border-light-navy/50 rounded-md p-3 text-white"/>
               </div>
               <div>
                 <label htmlFor="message" className="block text-light-slate mb-2">Message</label>
-                <textarea id="message" name="message" value={formData.message} onChange={handleChange} required rows={5} className="w-full bg-navy border border-light-navy/50 rounded-md p-3 text-white"></textarea>
+                <textarea placeholder="Your text message" id="message" name="message" value={formData.message} onChange={handleChange} required rows={5} className="w-full bg-navy border border-light-navy/50 rounded-md p-3 text-white"></textarea>
               </div>
               <button type="submit" className="bg-light-navy cursor-pointer text-white py-2 px-6 rounded-lg hover:bg-bright-blue/80 transition duration-400" disabled={isLoading}>
                 {isLoading ? 'Sending...' : 'Send Message'}
