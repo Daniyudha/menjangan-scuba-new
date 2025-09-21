@@ -12,8 +12,8 @@ import Link from 'next/link';
 const icons = [Award, ShieldCheck, Tag, Sprout];
 
 // Pastikan path gambar ini benar di dalam folder /public Anda
-const imageUrl1 = "/images/about-3.jpg";
-const imageUrl2 = "/images/about-1.jpg";
+const imageUrl1 = "/images/about-1.jpg";
+const imageUrl2 = "/images/about-2.jpg";
 
 const AboutUsSection = () => { // Hapus props 'lang'
     // Ambil data langsung dari objek content
