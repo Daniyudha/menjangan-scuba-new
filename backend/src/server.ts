@@ -28,7 +28,9 @@ const allowedOrigins = [
     'http://localhost:3001',
     'http://localhost:3003',
     'https://menjangan.gegacreative.com',
-    'https://www.menjangan.gegacreative.com'
+    'https://www.menjangan.gegacreative.com',
+    'https://menjanganscuba.com',
+    'https://www.menjanganscuba.com'
 ];
 
 // CORS configuration yang menerima requests dari tools tanpa origin
