@@ -13,7 +13,7 @@ const nextConfig = {
       // Backend production
       {
         protocol: 'https',
-        hostname: 'menjangan-be.gegacreative.com',
+        hostname: 'api.menjanganscuba.com',
         pathname: '/uploads/**',
       },
       
