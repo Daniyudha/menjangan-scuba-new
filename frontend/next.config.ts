@@ -9,11 +9,22 @@ const nextConfig = {
         port: '8080',
         pathname: '/uploads/**',
       },
+      {
+        protocol: 'http',
+        hostname: '192.168.1.106',
+        port: '8080',
+        pathname: '/uploads/**',
+      },
 
       // Backend production
       {
         protocol: 'https',
         hostname: 'api.menjanganscuba.com',
+        pathname: '/uploads/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'menjangan-be.gegacreative.com',
         pathname: '/uploads/**',
       },
       
@@ -31,6 +42,8 @@ const nextConfig = {
         hostname: 'i.pravatar.cc',
       },
     ],
+    // Allow unoptimized images for uploaded content
+    unoptimized: true,
   },
 };
 

@@ -212,6 +212,7 @@ export default function GalleryPage() {
                                             width={400}
                                             height={400}
                                             className="w-full h-auto group-hover:scale-110 transition-transform duration-500 ease-in-out"
+                                            unoptimized={true}
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                             <div className="absolute bottom-0 left-0 p-4">
@@ -322,6 +323,7 @@ export default function GalleryPage() {
                                     width={1200}
                                     height={1200}
                                     className="max-h-[75vh] w-auto object-contain"
+                                    unoptimized={true}
                                 />
                             ) : (
                                 // Video Content - Sized based on type
