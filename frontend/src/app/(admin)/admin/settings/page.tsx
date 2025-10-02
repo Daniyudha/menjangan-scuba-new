@@ -12,8 +12,8 @@ interface ExperienceData { videoUrl: string; imageUrl: string; }
 interface SocialLinksData { instagram: string; facebook: string; twitter: string; youtube: string; }
 interface SettingsData { hero: HeroSlide[]; experience: ExperienceData; socialLinks: SocialLinksData; }
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
-const baseUrl = apiUrl.replace('/api', '');
+const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+const apiUrl = `${baseUrl}/api`;
 
 export default function SettingsPage() {
     // STATE UNTUK DATA

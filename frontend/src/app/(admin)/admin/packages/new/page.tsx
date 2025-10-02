@@ -20,7 +20,7 @@ export default function NewPackagePage() {
   // State untuk mengelola input teks
   const [formData, setFormData] = useState<NewPackageData>({
     title: '',
-    price: 'IDR',
+    price: '',
     description: '',
   });
   const [inclusionsText, setInclusionsText] = useState('');
@@ -32,7 +32,7 @@ export default function NewPackagePage() {
   const [showSaveConfirm, setShowSaveConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -47,7 +47,7 @@ export default function NewPackagePage() {
     // Format angka saat pengguna mengetik
     const formattedPrice = formatPrice(e.target.value);
     // Tambahkan "IDR " di depannya sebelum disimpan ke state
-    setFormData(prevState => ({ ...prevState, price: `IDR ${formattedPrice}` }));
+    setFormData(prevState => ({ ...prevState, price: `${formattedPrice}` }));
 };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -71,7 +71,7 @@ export default function NewPackagePage() {
   const confirmSave = async () => {
     const dataToSend = new FormData();
     dataToSend.append('title', formData.title);
-    dataToSend.append('price', `IDR ${unformatPrice(formData.price)}`);
+    dataToSend.append('price', `${unformatPrice(formData.price)}`);
     dataToSend.append('description', formData.description);
     dataToSend.append('inclusions', inclusionsText);
 

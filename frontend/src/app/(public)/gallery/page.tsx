@@ -30,7 +30,7 @@ export default function GalleryPage() {
     const touchEndX = useRef(0);
     const isDragging = useRef(false);
 
-    const baseUrl = (process.env.NEXT_PUBLIC_API_URL || '').replace('/api', '');
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
     useEffect(() => {
         const fetchData = async () => {

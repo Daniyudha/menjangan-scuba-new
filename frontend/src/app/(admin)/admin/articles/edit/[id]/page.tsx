@@ -37,8 +37,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
   const [error, setError] = useState<string | null>(null);
   const [showSaveConfirm, setShowSaveConfirm] = useState(false);
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
-  const baseUrl = apiUrl.replace('/api', '');
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
   useEffect(() => {
     const fetchArticle = async () => {

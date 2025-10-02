@@ -24,7 +24,7 @@ export default function TestimonialsAdminPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [debouncedSearchTerm] = useDebounce(searchTerm, 500);
 
-    const baseUrl = (process.env.NEXT_PUBLIC_API_URL || '').replace('/api', '');
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
 
     useEffect(() => {

@@ -28,8 +28,7 @@ export default function GalleryAdminPage() {
     const [uploadPreview, setUploadPreview] = useState<string | null>(null);
     const [youtubeUrl, setYoutubeUrl] = useState('');
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
-    const baseUrl = apiUrl.replace('/api', '');
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
     useEffect(() => {
         const fetchData = async () => {
@@ -193,7 +192,7 @@ export default function GalleryAdminPage() {
                         {'url' in showDeleteConfirm ? (
                             <Image src={`${baseUrl}${showDeleteConfirm.url}`} alt={showDeleteConfirm.caption} width={100} height={100} className="mx-auto my-4 rounded-md object-cover"/>
                         ) : (
-                            <div className="w-40 aspect-video mx-auto my-4">
+                            <div className="w-40 mx-auto my-4" style={{ aspectRatio: getYouTubeVideoType(showDeleteConfirm.youtubeUrl) === 'short' ? '9/16' : '16/9' }}>
                                 <iframe
                                     src={`https://www.youtube.com/embed/${getYouTubeVideoId(showDeleteConfirm.youtubeUrl)}?autoplay=1&mute=1&playsinline=1&loop=1&playlist=${getYouTubeVideoId(showDeleteConfirm.youtubeUrl)}`}
                                     title={showDeleteConfirm.caption}
@@ -326,7 +325,7 @@ export default function GalleryAdminPage() {
                             <Image src={`${baseUrl}${item.url}`} alt={item.caption} width={400} height={400} className="w-full h-auto object-cover"/>
                         ) : (
                             // Render Video with automatic aspect ratio
-                            <div className={`aspect-${getYouTubeVideoType(item.youtubeUrl) === 'short' ? '9/16' : '16/9'} w-full`}>
+                            <div className="w-full" style={{ aspectRatio: getYouTubeVideoType(item.youtubeUrl) === 'short' ? '9/16' : '16/9' }}>
                                 <iframe
                                     src={`https://www.youtube.com/embed/${getYouTubeVideoId(item.youtubeUrl)}?autoplay=1&mute=1&playsinline=1&loop=1&playlist=${getYouTubeVideoId(item.youtubeUrl)}`}
                                     title={item.caption}

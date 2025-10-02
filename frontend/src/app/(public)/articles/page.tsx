@@ -31,7 +31,7 @@ export default function ArticlesPage() {
     const [error, setError] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
 
-    const baseUrl = (process.env.NEXT_PUBLIC_API_URL || '').replace('/api', '');
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
     useEffect(() => {
         const fetchArticles = async () => {

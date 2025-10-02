@@ -25,7 +25,7 @@ export default function TestimonialsSection() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const baseUrl = (process.env.NEXT_PUBLIC_API_URL || '').replace('/api', '');
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
     useEffect(() => {
         const fetchTestimonials = async () => {

@@ -2,6 +2,7 @@
 "use client";
 
 import { apiClient } from '@/lib/apiClient';
+import { formatPrice } from '@/lib/utils';
 import { Check } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
@@ -22,7 +23,7 @@ export default function PackagesSection() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const baseUrl = (process.env.NEXT_PUBLIC_API_URL || '').replace('/api', '');
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
     useEffect(() => {
         const fetchPackages = async () => {
@@ -92,7 +93,7 @@ export default function PackagesSection() {
                             <div className="absolute inset-0 p-6 flex flex-col justify-center items-center text-center text-white transition-all duration-500 ease-in-out md:group-hover:justify-start md:group-hover:pt-8">
                                 <div className="text-center">
                                     <h3 className="text-2xl font-bold">{pkg.title}</h3>
-                                    <p className="text-lg font-semibold text-bright-blue mt-1">{pkg.price}</p>
+                                    <p className="text-lg font-semibold text-bright-blue mt-1">{formatPrice(pkg.price)}</p>
                                 </div>
 
                                 <div className="w-full mt-4 transition-opacity duration-300 delay-200 sm:block lg:opacity-0 lg:group-hover:opacity-100">

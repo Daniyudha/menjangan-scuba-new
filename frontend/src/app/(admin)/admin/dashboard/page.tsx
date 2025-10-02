@@ -28,13 +28,12 @@ export default function DashboardPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
-    const baseUrl = apiUrl.replace('/api', '');
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const response = await fetch(`${apiUrl}/dashboard`, {
+                const response = await fetch(`${baseUrl}/api/dashboard`, {
                     method: 'GET',
                     credentials: 'include', // ⬅️ ini penting agar cookie JWT ikut
                 });
@@ -56,7 +55,7 @@ export default function DashboardPage() {
             }
         };
         fetchStats();
-    }, [apiUrl]);
+    }, [baseUrl]);
 
 
     if (loading) {

@@ -25,8 +25,7 @@ export default function PackagesAdminPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<Package | null>(null);
   const [notification, setNotification] = useState<string | null>(null);
   
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
-  const baseUrl = apiUrl.replace('/api', '');
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
   
   // --- DATA FETCHING ---
   useEffect(() => {
@@ -50,7 +49,7 @@ export default function PackagesAdminPage() {
       setNotification(savedNotification);
       localStorage.removeItem('packageNotification');
     }
-  }, [apiUrl]); // Array kosong berarti ini hanya berjalan sekali saat komponen mount
+  }, []); // Array kosong berarti ini hanya berjalan sekali saat komponen mount
 
   // --- NOTIFICATION LOGIC ---
   useEffect(() => {
@@ -148,7 +147,7 @@ export default function PackagesAdminPage() {
                         <span className="text-xs text-slate">No Image</span>
                     )}
                   </td>
-                  <td className="p-4 text-slate whitespace-nowrap">{`IDR ${formatPrice(pkg.price)}`}</td>
+                  <td className="p-4 text-slate whitespace-nowrap">{formatPrice(pkg.price)}</td>
                   <td className="p-4">
                     <div className="flex justify-end gap-2">
                       <Link href={`/admin/packages/edit/${pkg.id}`} className="p-2 text-slate hover:text-blue-400 hover:bg-light-gray rounded-md" title="Edit">

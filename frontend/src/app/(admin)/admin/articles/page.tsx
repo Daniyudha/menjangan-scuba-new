@@ -28,7 +28,7 @@ export default function ArticlesAdminPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<Article | null>(null);
   const [notification, setNotification] = useState<string | null>(null);
 
-  const baseUrl = (process.env.NEXT_PUBLIC_API_URL || '').replace('/api', '');
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);

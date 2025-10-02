@@ -8,15 +8,15 @@
  * @returns String angka yang sudah diformat, atau string aslinya jika tidak valid.
  */
 export function formatPrice(value: number | string): string {
-  if (value === null || value === undefined) return '';
+  if (value === null || value === undefined || value === '' || value === 'IDR' || value === '0') return 'ask us for the price';
   // Hapus semua karakter non-digit
   const numberString = String(value).replace(/\D/g, '');
-  if (numberString === '') {
-    return '';
+  if (numberString === '' || numberString === '0') {
+    return 'ask us for the price';
   }
   const number = Number(numberString);
   // Gunakan locale 'id-ID' untuk format Rupiah tanpa simbol
-  return new Intl.NumberFormat('id-ID').format(number);
+  return `IDR ${new Intl.NumberFormat('id-ID').format(number)}`;
 }
 
 /**

@@ -19,7 +19,7 @@ export default function ArticleDetailPage({ params }: { params: Promise<{ id: st
     
     // 3. Gunakan React.use() untuk mendapatkan nilai 'id'
     const { id } = use(params);
-    const baseUrl = (process.env.NEXT_PUBLIC_API_URL || '').replace('/api', '');
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
     useEffect(() => {
         if (id) {

@@ -31,8 +31,7 @@ export default function EditPackagePage({ params }: { params: Promise<{ id: stri
   const [error, setError] = useState<string | null>(null);
   const [showSaveConfirm, setShowSaveConfirm] = useState(false);
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
-  const baseUrl = apiUrl.replace('/api', '');
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
   useEffect(() => {
     if (id) {
@@ -40,7 +39,7 @@ export default function EditPackagePage({ params }: { params: Promise<{ id: stri
         try {
           const data: Package = await apiClient(`/packages/${id}`);
           // Format harga sebelum disimpan ke state
-          data.price = `IDR ${formatPrice(data.price)}`;
+          data.price = `${formatPrice(data.price)}`;
           setPkg(data);
           setInclusionsText(data.inclusions.join('\n'));
         } catch (err: unknown) {
@@ -55,7 +54,7 @@ export default function EditPackagePage({ params }: { params: Promise<{ id: stri
 
   const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
     const formattedPrice = formatPrice(e.target.value);
-    setPkg(prev => ({ ...prev, price: `IDR ${formattedPrice}` }));
+    setPkg(prev => ({ ...prev, price: `${formattedPrice}` }));
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
