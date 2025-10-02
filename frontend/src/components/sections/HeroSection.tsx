@@ -91,7 +91,7 @@ export default function HeroSection() {
                             <div className="relative z-10 h-full flex flex-col justify-center items-center text-center text-white p-6">
                                  <h1 className="text-4xl md:text-6xl font-bold mb-4">{slide.headline}</h1>
                                 <p className="text-lg md:text-xl max-w-3xl mb-8">{slide.subheadline}</p>
-                                <a href="#packages" className="text-white bg-light-navy rounded-full font-bold py-3 px-8 transition duration-500">
+                                <a href="/packages" className="text-white bg-light-navy rounded-full font-bold py-3 px-8 transition duration-500">
                                     {slide.cta}
                                 </a>
                             </div>

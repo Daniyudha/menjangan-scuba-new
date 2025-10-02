@@ -5,10 +5,12 @@ import Image from 'next/image';
 import { content } from '@/lib/content';
 
 const activityImages = [
-   "/images/surfing.jpg",
-    "/images/free-diving.jpg",
     "/images/scuba-diving.jpg",
-    "/images/snorkeling.jpg"
+    "/images/free-diving.jpg",
+    "/images/snorkeling.jpg",
+   "/images/dolphin.jpg",
+   "/images/birding.jpg",
+   "/images/macro.jpg",
 ];
 
 const ActivitiesSection = () => {
@@ -24,7 +26,7 @@ const ActivitiesSection = () => {
                     {sectionContent.subtitle}
                 </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                     {sectionContent.items.map((activity, index) => (
                         <div 
                             key={index} 
@@ -39,9 +41,9 @@ const ActivitiesSection = () => {
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 rounded-2xl" />
                             <div className="absolute inset-0 border-2 border-white/70 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-                            <div className="absolute inset-0 p-6 flex flex-col justify-center items-center text-center text-white transition-all duration-500 ease-in-out md:group-hover:justify-end md:group-hover:pb-8">
+                            <div className="absolute inset-0 p-6 flex flex-col justify-center items-center text-center text-white transition-all duration-500 ease-in-out lg:group-hover:justify-end lg:group-hover:pb-8">
                                 <h3 className="text-2xl font-bold">{activity.name}</h3>
-                                <div className="w-full mt-4 transition-opacity duration-300 delay-200 sm:block md:opacity-0 md:group-hover:opacity-100">
+                                <div className="w-full mt-4 transition-opacity duration-300 delay-200 sm:block lg:opacity-0 lg:group-hover:opacity-100">
                                     <p className="text-light-slate text-sm">
                                         {activity.description}
                                     </p>

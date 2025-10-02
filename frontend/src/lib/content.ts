@@ -47,10 +47,12 @@ export const content = {
         title: 'Explore The Wonders Of Sea Diving With Us',
         subtitle: 'Are you ready to plunge into the majestic depths of the underwater world? Look no further!',
         items: [
-            { name: 'Surfing', description: 'Conquer the best waves and feel the adrenaline rush.' },
-            { name: 'Free Diving', description: 'Experience the freedom of exploring the underwater world on a single breath.' },
             { name: 'Scuba Diving', description: 'Extraordinary scuba diving experiences that will leave you breathless.' },
+            { name: 'Free Diving', description: 'Experience the freedom of exploring the underwater world on a single breath.' },
             { name: 'Snorkeling Dive', description: 'Enjoy the beauty of the clear and colorful surface waters.' },
+            { name: 'Dolphin Experience', description: 'Swim alongside dolphins and discover the magic of the ocean.' },
+            { name: 'Birding', description: 'Explore diverse habitats and witness the vibrant birdlife in their natural surroundings.' },
+            { name: 'Macrophotography', description: 'Capture the fascinating details of tiny creatures and underwater life through the lens.' },
         ]
     },
     packages: {

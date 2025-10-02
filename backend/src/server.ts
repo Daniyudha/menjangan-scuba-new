@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import path from 'path';
 
-// Import semua routes Anda
+// Import semua routes
 import articleRoutes from './api/routes/article.routes';
 import authRoutes from './api/routes/auth.routes';
 import dashboardRoutes from './api/routes/dashboard.routes';
@@ -20,56 +20,68 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// --- PERBAIKAN CORS UNTUK TOOLS SEPERTI POSTMAN/CURL ---
-// Konfigurasi CORS yang lebih fleksibel
+/* =========================
+   CORS CONFIG
+========================= */
 const allowedOrigins = [
-    'http://192.168.1.106:3000',
-    'http://localhost:3000',
-    'http://localhost:3001',
-    'http://localhost:3003',
-    'https://menjangan.gegacreative.com',
-    'https://www.menjangan.gegacreative.com',
-    'https://menjanganscuba.com',
-    'https://www.menjanganscuba.com'
+  'http://192.168.1.106:3000',
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'http://localhost:3003',
+  'https://menjangan.gegacreative.com',
+  'https://www.menjangan.gegacreative.com',
+  'https://menjanganscuba.com',
+  'https://www.menjanganscuba.com'
 ];
 
-// CORS configuration yang menerima requests dari tools tanpa origin
-app.use(cors({
-  origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps, curl, Postman)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  credentials: true,
-  optionsSuccessStatus: 200
-}));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true); // allow Postman, curl, mobile apps
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error('Not allowed by CORS'));
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    credentials: true,
+    optionsSuccessStatus: 200,
+  })
+);
 
-// Middleware untuk parsing cookies
+/* =========================
+   MIDDLEWARE
+========================= */
 app.use(cookieParser());
-
-// Middleware untuk parsing JSON dan form data
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Static file serving with proper configuration
-app.use('/uploads', express.static(path.join(__dirname, '../uploads'), {
-  maxAge: '1d',
-  etag: true,
-  lastModified: true,
-  setHeaders: (res, path) => {
-    // Set CORS headers for images
-    res.set('Access-Control-Allow-Origin', '*');
-    res.set('Access-Control-Allow-Methods', 'GET');
-  }
-}));
+/* =========================
+   STATIC FILE SERVING
+========================= */
+// Gunakan process.cwd() agar path selalu benar walaupun sudah di-build
+const uploadsPath = path.join(process.cwd(), 'uploads');
 
-// API Routes
+// akses langsung: /uploads/filename.jpg
+app.use(
+  '/uploads',
+  express.static(uploadsPath, {
+    maxAge: '1d',
+    etag: true,
+    lastModified: true,
+    setHeaders: (res) => {
+      res.set('Access-Control-Allow-Origin', '*');
+      res.set('Access-Control-Allow-Methods', 'GET');
+    },
+  })
+);
+
+// alias biar /api/uploads/... juga bisa
+app.use('/api/uploads', express.static(uploadsPath));
+
+/* =========================
+   API ROUTES
+========================= */
 app.use('/api/auth', authRoutes);
 app.use('/api/packages', packageRoutes);
 app.use('/api/articles', articleRoutes);
@@ -79,30 +91,40 @@ app.use('/api/settings', settingsRoutes);
 app.use('/api/submissions', submissionRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 
-// Health check endpoint
+/* =========================
+   HEALTH CHECK & ROOT
+========================= */
 app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
+  res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
 app.get('/', (req, res) => {
-    res.send('Menjangan Scuba Backend is running!');
+  res.send('Menjangan Scuba Backend is running!');
 });
 
-// Global error handler
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+/* =========================
+   GLOBAL ERROR HANDLER
+========================= */
+app.use(
+  (err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
     console.error('Global error handler:', err);
-    
-    if (err.type === 'entity.too.large') {
-        return res.status(413).json({ message: 'File too large' });
-    }
-    
-    res.status(err.status || 500).json({
-        message: err.message || 'Internal server error',
-        ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
-    });
-});
 
+    if (err.type === 'entity.too.large') {
+      return res.status(413).json({ message: 'File too large' });
+    }
+
+    res.status(err.status || 500).json({
+      message: err.message || 'Internal server error',
+      ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
+    });
+  }
+);
+
+/* =========================
+   START SERVER
+========================= */
 app.listen(PORT, () => {
-    console.log(`Server is listening on port ${PORT}`);
-    console.log(`Health check available at http://localhost:${PORT}/health`);
+  console.log(`✅ Server is listening on port ${PORT}`);
+  console.log(`✅ Health check: http://localhost:${PORT}/health`);
+  console.log(`✅ Static uploads: http://localhost:${PORT}/uploads/<filename>`);
 });
