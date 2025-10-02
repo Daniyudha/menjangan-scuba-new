@@ -1,9 +1,9 @@
 // src/lib/apiClient.ts
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
 export const apiClient = async (endpoint: string, options: RequestInit = {}) => {
-    const url = `${API_URL}${endpoint}`;
+    const url = `${API_URL}/api${endpoint}`;
     
     let token = null;
     if (typeof window !== 'undefined') {
