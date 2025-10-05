@@ -3,9 +3,10 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { Fish, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { content } from '@/lib/content';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,20 +16,14 @@ const Header = () => {
 
   const navLinks = [
     { href: '/', label: navContent.home },
+    { href: '/about', label: navContent.about },
     { href: '/packages', label: 'Packages' },
     { href: '/testimonials', label: navContent.testimonials },
     { href: '/gallery', label: 'Gallery' },
     { href: '/articles', label: 'Articles' },
-    { href: '/about', label: navContent.about },
     { href: '/contact', label: 'Contact' },
   ];
 
-  // Efek untuk mendeteksi scroll
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 10);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -53,29 +48,19 @@ const Header = () => {
         : 'bg-transparent'
         }`}
     >
-      <div className={`container mx-auto px-6 py-4 flex justify-between items-center ${isScrolled || isOpen
+      <div className={`container mx-auto px-6 py-6 flex justify-between items-center ${isScrolled || isOpen
         ? 'bg-white my-2 rounded-full shadow-lg transition-all duration-700 ease-in-out'
         : 'bg-transparent transition-all duration-700 ease-in-out'
         }`}
       >
-        <Link href="/" className="flex items-center space-x-2">
-          <div className="flex items-center gap-1">
-            <span className={`text-xl font-black text-white" ${isScrolled || isOpen
-              ? 'text-black'
-              : 'text-xl font-black text-white'
-              }`}
-            >
-              MENJANGAN
-            </span>
-            <Fish className="w-5 h-5 text-bright-blue transform -rotate-45" />
-            <span className={`text-xl font-black text-white" ${isScrolled || isOpen
-              ? 'text-black'
-              : 'text-xl font-black text-white'
-              }`}
-            >
-              SCUBA
-            </span>
-          </div>
+        <Link href="/" className="flex items-center">
+          <Image
+            src={isScrolled || isOpen ? "/images/logo/logo-full-color.png" : "/images/logo/logo-full-white.png"}
+            alt="Menjangan Scuba Logo"
+            width={180}
+            height={45}
+            className="object-contain"
+          />
         </Link>
 
         {/* Navigasi Desktop */}

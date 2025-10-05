@@ -65,7 +65,6 @@ export const content = {
             { title: 'Snorkeling Package', price: 'IDR 750,000', description: 'Enjoy the beauty of Menjangan\'s clear surface waters, perfect for the whole family.', inclusions: ['Snorkeling Gear', 'Snorkel Guide', 'Lunch & Mineral Water', 'Visit to 2 Spots'] },
         ]
     },
-    // ... (Sisa konten lainnya juga disederhanakan)
     testimonials: {
         title: 'Feedback By Our Members',
         subtitle: 'We value your thoughts and opinions, and we are thrilled to have you as a valued member of our community.',
@@ -108,13 +107,22 @@ export const content = {
     footer: {
         description: 'Explore the mysteries of the ocean and dive into a world full of wonders.',
         quickLinksTitle: 'Quick Link',
+        quickLinks: [
+            { href: '/', label: 'Home' },
+            { href: '/about', label: 'About' },
+            { href: '/packages', label: 'Packages' },
+            { href: '/testimonials', label: 'Testimonials' },
+            { href: '/gallery', label: 'Gallery' },
+            { href: '/articles', label: 'Articles' },
+            { href: '/contact', label: 'Contact' },
+        ],
         servicesTitle: 'Services',
-        services: ['Surfing', 'Free Diving', 'Scuba Diving', 'Snorkeling Dive'],
+        services: ['Free Diving', 'Scuba Diving', 'Snorkeling Dive', 'Dive Course', 'Dolphin Experience', 'Birding'],
         contactTitle: 'Contact Us',
         contactInfo: {
-            phone: '+62 821-9898-4623',
+            phone: '+62 821-9898-4623 (Putu oktawiran)',
             email: 'info@menjanganscuba.com',
-            address: 'Menjangan Island, Bali, Indonesia'
+            address: 'Jalan Seririt-Gilimanuk, Pemuteran, Gerokgak, Buleleng Regency, Bali, Indonesia',
         },
         copyright: `©${new Date().getFullYear()} MenjanganDive. All rights reserved.`,
         privacy: 'Privacy Policy',

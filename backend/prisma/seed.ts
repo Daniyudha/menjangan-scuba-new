@@ -23,7 +23,7 @@ async function main() {
   console.log('Old data deleted successfully.');
 
   // 2. Seed Pengguna Admin
-  const hashedPassword = await bcrypt.hash('password123', 10); // Enkripsi password
+  const hashedPassword = await bcrypt.hash('Scubadive25!', 10); // Enkripsi password
   await prisma.user.create({
     data: {
       email: 'admin@menjanganscuba.com',

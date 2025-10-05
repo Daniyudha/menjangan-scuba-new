@@ -25,8 +25,8 @@ const ContactSection = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   // Data statis dari content.ts
-  const contactContent = content.footer;
-  const mapEmbedUrl = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15813.79586141444!2d114.61198642751465!3d-8.05584523282203!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd160d50711a6ef%3A0x6c6a51d4f04f10ab!2sLabuhan%20Lalang!5e0!3m2!1sen!2sid!4v1691234567890!5m2!1sen!2sid";
+  const contactContent = content.footer;  
+  const mapEmbedUrl = "https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3949.5384378091658!2d114.6454960750088!3d-8.148378991881897!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zOMKwMDgnNTQuMiJTIDExNMKwMzgnNTMuMSJF!5e0!3m2!1sen!2sid!4v1759418620939!5m2!1sen!2sid";
 
   // --- HANDLERS ---
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -92,12 +92,12 @@ const ContactSection = () => {
           </div>
 
           <div className="flex flex-col gap-10">
-            <div className="bg-navy p-8 rounded-lg">
+            <div className="bg-navy p-8 rounded-lg max-w-md">
               <h3 className="text-2xl font-bold text-white mb-6">Contact Information</h3>
               <ul className="space-y-4 text-slate">
-                <li className="flex items-center gap-4"><Phone className="w-6 h-6 text-bright-blue"/><span>{contactContent.contactInfo.phone}</span></li>
-                <li className="flex items-center gap-4"><Mail className="w-6 h-6 text-bright-blue"/><span>{contactContent.contactInfo.email}</span></li>
-                <li className="flex items-start gap-4"><MapPin className="w-6 h-6 text-bright-blue mt-1"/><span>{contactContent.contactInfo.address}</span></li>
+                <li className="flex items-center gap-4"><div className="w-7 flex justify-center"><Phone size={28} /></div><span>{contactContent.contactInfo.phone}</span></li>
+                <li className="flex items-center gap-4"><div className="w-7 flex justify-center"><Mail size={28} /></div><span>{contactContent.contactInfo.email}</span></li>
+                <li className="flex items-center gap-4"><div className="w-7 flex justify-center"><MapPin size={28} /></div><span>{contactContent.contactInfo.address}</span></li>
               </ul>
             </div>
             <div className="w-full aspect-video rounded-lg overflow-hidden">

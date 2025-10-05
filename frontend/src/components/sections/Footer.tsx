@@ -5,6 +5,8 @@ import { useState, useEffect } from 'react';
 import { apiClient } from '@/lib/apiClient';
 import { Facebook, Instagram, Youtube, Music2, Fish } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { content } from '@/lib/content';
 
 // Tipe data untuk data dinamis dari API
 interface SocialLinksData { instagram?: string; facebook?: string; twitter?: string; youtube?: string; }
@@ -13,6 +15,7 @@ interface SocialLinksData { instagram?: string; facebook?: string; twitter?: str
 interface FooterContent {
     description: string;
     quickLinksTitle: string;
+    quickLinks: { href: string; label: string }[];
     servicesTitle: string;
     contactTitle: string;
     services: string[];
@@ -50,15 +53,8 @@ export default function Footer() {
         fetchFooterData();
     }, []);
 
-    // Definisikan link navigasi di sini
-    const quickLinks = [
-        { href: '/about', label: 'About' },
-        { href: '/packages', label: 'Packages' },
-        { href: '/testimonials', label: 'Testimonials' },
-        { href: '/contact', label: 'Contact' },
-    ];
-
-    const services = ['Surfing', 'Free Diving', 'Scuba Diving', 'Snorkeling'];
+    const services = content.footer.services;
+    const quickLinks = content.footer.quickLinks;
 
     return (
         <footer className="bg-dark-navy pt-20 pb-8 w-full">
@@ -67,12 +63,14 @@ export default function Footer() {
 
                     {/* Kolom 1: Logo, Deskripsi, dan Ikon Sosial Media */}
                     <div className="space-y-4">
-                        <Link href="/" className="flex items-center space-x-2">
-                            <div className="flex items-center gap-1">
-                                <span className="text-2xl font-black text-white">MENJANGAN</span>
-                                <Fish className="w-6 h-6 text-bright-blue transform -rotate-45" />
-                                <span className="text-2xl font-black text-white">SCUBA</span>
-                            </div>
+                        <Link href="/" className="flex items-center">
+                        <Image
+                            src="/images/logo/logo-full-white.png"
+                            alt="Menjangan Scuba Logo"
+                            width={250}
+                            height={62}
+                            className="object-contain"
+                        />
                         </Link>
                         <p className="text-slate">
                             {footerContent.description ??
@@ -89,10 +87,10 @@ export default function Footer() {
                     {/* Kolom 2: Quick Links */}
                     <div>
                         <h4 className="font-bold text-white text-lg mb-4">
-                            {footerContent.quickLinksTitle ?? "Quick Links"}
+                            {footerContent.quickLinksTitle ?? content.footer.quickLinksTitle}
                         </h4>
                         <ul className="space-y-3">
-                            {quickLinks.map(link => (
+                            {(footerContent.quickLinks ?? quickLinks).map(link => (
                                 <li key={link.href}>
                                     <Link href={link.href} className="text-slate hover:text-blue-400 transition-colors">
                                         {link.label}
@@ -118,7 +116,7 @@ export default function Footer() {
                         <ul className="space-y-3 text-slate">
                             <li>{footerContent.contactInfo?.phone ?? "+62 821-9898-4623"}</li>
                             <li>{footerContent.contactInfo?.email ?? "info@menjanganscuba.com"}</li>
-                            <li>{footerContent.contactInfo?.address ?? "Menjangan Island, Bali, Indonesia"}</li>
+                            <li>{footerContent.contactInfo?.address ?? "Jalan Seririt-Gilimanuk, Pemuteran, Gerokgak, Buleleng Regency, Bali, Indonesia"}</li>
                         </ul>
 
                     </div>
