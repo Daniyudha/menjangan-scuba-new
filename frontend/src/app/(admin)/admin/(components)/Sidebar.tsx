@@ -2,6 +2,7 @@
 "use client";
 import { ChevronLeft, FileText, Fish, ImageIcon, LayoutDashboard, MessageSquare, Package, Star } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
@@ -24,10 +25,14 @@ const Sidebar = () => {
     <aside className={`bg-navy text-white h-screen flex flex-col sticky top-0 transition-all duration-300 z-50 ${isMinimized ? 'w-20' : 'w-64'}`}>
       <div className="flex items-center justify-between p-4 border-b border-light-navy/20 h-[69px]">
         {!isMinimized && (
-          <Link href="/" className="flex items-center gap-1 opacity-100 transition-opacity duration-300">
-            <span className="font-black text-white">MENJANGAN</span>
-            <Fish className="w-5 h-5 text-bright-blue transform -rotate-45" />
-            <span className="font-black text-white">SCUBA</span>
+          <Link href="/" className="flex items-center">
+            <Image
+            src="/images/logo/logo-full-white.png"
+            alt="Menjangan Scuba Logo"
+            width={180}
+            height={45}
+            className="object-contain"
+            />
           </Link>
         )}
         <button 
