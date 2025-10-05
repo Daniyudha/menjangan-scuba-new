@@ -10,7 +10,7 @@ const activityImages = [
     "/images/snorkeling.jpg",
    "/images/dolphin.jpg",
    "/images/birding.jpg",
-   "/images/macro.jpg",
+   "/images/macro.jpeg",
 ];
 
 const ActivitiesSection = () => {
