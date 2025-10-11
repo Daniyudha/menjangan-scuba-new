@@ -48,11 +48,11 @@ export const content = {
         subtitle: 'Are you ready to plunge into the majestic depths of the underwater world? Look no further!',
         items: [
             { name: 'Scuba Diving', description: 'Extraordinary scuba diving experiences that will leave you breathless.' },
-            { name: 'Free Diving', description: 'Experience the freedom of exploring the underwater world on a single breath.' },
-            { name: 'Snorkeling Dive', description: 'Enjoy the beauty of the clear and colorful surface waters.' },
+            { name: 'Snorkeling', description: 'Enjoy the beauty of the clear and colorful surface waters.' },
+            { name: 'Free Dive dan Spearfishing ', description: 'Experience the freedom of exploring the underwater world on a single breath.' },
             { name: 'Dolphin Experience', description: 'Swim alongside dolphins and discover the magic of the ocean.' },
-            { name: 'Birding', description: 'Explore diverse habitats and witness the vibrant birdlife in their natural surroundings.' },
             { name: 'Macrophotography', description: 'Capture the fascinating details of tiny creatures and underwater life through the lens.' },
+            { name: 'Birding', description: 'Explore diverse habitats and witness the vibrant birdlife in their natural surroundings.' },
         ]
     },
     packages: {

@@ -6,11 +6,11 @@ import { content } from '@/lib/content';
 
 const activityImages = [
     "/images/scuba-diving.jpg",
-    "/images/free-diving.jpg",
     "/images/snorkeling.jpg",
+    "/images/free-diving.jpg",
    "/images/dolphin.jpg",
-   "/images/birding.jpg",
    "/images/macro.jpeg",
+   "/images/birding.jpg",
 ];
 
 const ActivitiesSection = () => {
@@ -41,13 +41,13 @@ const ActivitiesSection = () => {
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 rounded-2xl" />
                             <div className="absolute inset-0 border-2 border-white/70 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-                            <div className="absolute inset-0 p-6 flex flex-col justify-center items-center text-center text-white transition-all duration-500 ease-in-out lg:group-hover:justify-end lg:group-hover:pb-8">
+                            <div className="absolute inset-0 p-6 flex flex-col justify-end items-center text-center text-white transition-all duration-500 ease-in-out lg:group-hover:justify-end lg:group-hover:pb-8">
                                 <h3 className="text-2xl font-bold">{activity.name}</h3>
-                                <div className="w-full mt-4 transition-opacity duration-300 delay-200 sm:block lg:opacity-0 lg:group-hover:opacity-100">
+                                <div className="w-full mt-2 transition-opacity duration-300 delay-200 sm:block lg:opacity-0 lg:group-hover:opacity-100">
                                     <p className="text-light-slate text-sm">
                                         {activity.description}
                                     </p>
-                                    <a href="/contact" className="text-bright-blue font-semibold mt-4 inline-block hover:underline">
+                                    <a href="/contact" className="text-blue-400 font-semibold mt-2 inline-block hover:underline">
                                         Learn More
                                     </a>
                                 </div>
